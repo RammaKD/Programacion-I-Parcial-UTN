@@ -62,12 +62,12 @@ def ingresar_paciente(lista_pacientes: list[dict], lista_grupos_sanguineos: list
 #region Read
 def mostrar_lista_pacientes(lista_pacientes: list[dict]) -> str:
     if comprobar_len_lista(lista_pacientes):
-        print("******************************************************************************************************************************************************************")
-        print("|         Nombre        |        Apellido       |          Edad          |        Altura         |        Peso        |         Dni       |    Grupo sanguíneo   |")
-        print("------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+        print("********************************************************************************************************************************")
+        print("|      Nombre     |     Apellido    |       Edad       |     Altura      |     Peso     |      Dni     |     Grupo sanguíneo   |")
+        print("--------------------------------------------------------------------------------------------------------------------------------")
         for paciente in lista_pacientes:
             mostrar_paciente(paciente)
-        print("****************************s*************************************************************************************************************************************")
+        print("********************************************************************************************************************************")
         retorno = "Paciente/s mostrados con éxito."
     else:
         retorno = "La lista está vacía, ingrese pacientes."
@@ -75,7 +75,7 @@ def mostrar_lista_pacientes(lista_pacientes: list[dict]) -> str:
     return retorno
 
 def mostrar_paciente(un_paciente: dict) -> dict:
-    print(f" {un_paciente["id"]}| {un_paciente['nombre']:<20}  | {un_paciente['apellido']:<20}  | {un_paciente['edad']:<20}  | {un_paciente['altura']:<20}  |  {un_paciente['peso']:<20}|   {un_paciente['dni']}    |   {un_paciente['grupo sanguineo']}   |")
+    print(f" {un_paciente["id"]}| {un_paciente['nombre']:<10}  | {un_paciente['apellido']:<10}  | {un_paciente['edad']:<10}  | {un_paciente['altura']:<10}  |  {un_paciente['peso']:<10}|   {un_paciente['dni']:<10}    |   {un_paciente['grupo sanguineo']:<10}   |")
     return un_paciente
 
 def buscar_paciente(lista_pacientes: list[dict], clave: str, valor: int|str) -> dict|bool:
@@ -163,8 +163,8 @@ def gestionar_modificacion(lista_pacientes: list[dict], lista_grupos_sanguineos:
     if comprobar_len_lista(lista_pacientes):
         retorno_id = buscar_por_dni(lista_pacientes)
         if type(retorno_id) == tuple:
-            gestion = retorno_id[0]
             empleado_encontrado = retorno_id[1]
+            gestion = "Modificación finalizada."
             menu_modificacion(lista_grupos_sanguineos, empleado_encontrado)
         else:
             gestion = retorno_id
@@ -175,7 +175,7 @@ def gestionar_modificacion(lista_pacientes: list[dict], lista_grupos_sanguineos:
 #endregion
 
 #region Delete
-def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: list[dict], dni: int) -> str:
+def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: list, dni: int) -> str:
     eliminado = buscar_paciente(lista_pacientes, "dni", 52345678)
     if not eliminado:
         retorno = f"No se encontró ningún paciente con ID {dni}."
@@ -193,14 +193,12 @@ def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: l
 
     return retorno
 
-def gestionar_eliminacion(lista_pacientes: list[dict], lista_grupos_sanguineos: list) -> str|tuple|bool:
+def gestionar_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminados: list) -> str|tuple|bool:
     if comprobar_len_lista(lista_pacientes):
         retorno_dni = buscar_por_dni(lista_pacientes)
         if type(retorno_dni) == tuple:
-            gestion = retorno_dni[0]
-            paciente_encontrado = retorno_dni[1]
             dni = retorno_dni[2]
-            eliminar_paciente(lista_grupos_sanguineos, paciente_encontrado, dni)
+            gestion = eliminar_paciente(lista_pacientes, lista_pacientes_eliminados, dni)
         else:
             gestion = retorno_dni
     else:
@@ -211,7 +209,7 @@ def gestionar_eliminacion(lista_pacientes: list[dict], lista_grupos_sanguineos: 
 
 
 
-
+#region Funciones auxiliares
 def buscar_por_dni(lista_pacientes: list[dict]) -> str:
     if comprobar_len_lista(lista_pacientes):
         dni = get_int("Ingrese DNI del paciente: ", "Error. Reingrese DNI: ", 50000000, 99999999, 3)
@@ -277,5 +275,5 @@ def determinar_tipo_dato_modificar(lista_grupos_sanguineos: list, dato_modificar
                 retorno = grupo_sanguineo
 
     return retorno
-
+#endregion
 

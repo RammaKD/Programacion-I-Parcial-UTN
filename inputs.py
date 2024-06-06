@@ -62,8 +62,8 @@ def get_float(mensaje: str, mensaje_error: str, minimo: float, maximo: float, re
     numero_validado = False
     
     while contador_reitentos <= reitentos:
-        numero = input((mensaje))
-        if numero.isdigit():
+        numero = input((mensaje)).replace(",", ".")
+        try:
             numero = float(numero)
             numero_validado = validate_number(numero, minimo, maximo)
             
@@ -73,7 +73,7 @@ def get_float(mensaje: str, mensaje_error: str, minimo: float, maximo: float, re
             else:
                 contador_reitentos += 1
                 mensaje = mensaje_error
-        else:
+        except:
             contador_reitentos += 1
             mensaje = mensaje_error
 
