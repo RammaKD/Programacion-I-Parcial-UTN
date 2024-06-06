@@ -1,6 +1,7 @@
+from os import system
 from inputs import *
 from generales import *
-from os import system
+
 
 #region Create
 def crear_paciente(id: int,nombre: str,apellido: str, edad: int, altura: int, peso: float, dni: int, grupo_sanguineo: str) -> dict:
@@ -62,12 +63,12 @@ def ingresar_paciente(lista_pacientes: list[dict], lista_grupos_sanguineos: list
 #region Read
 def mostrar_lista_pacientes(lista_pacientes: list[dict]) -> str:
     if comprobar_len_lista(lista_pacientes):
-        print("********************************************************************************************************************************")
-        print("|      Nombre     |     Apellido    |       Edad       |     Altura      |     Peso     |      Dni     |     Grupo sanguíneo   |")
-        print("--------------------------------------------------------------------------------------------------------------------------------")
+        print("***************************************************************************************************************************")
+        print("|       Nombre       |      Apellido      |     Edad      |   Altura(cm)  |    Peso(KG)   |      DNI      |Grupo sanguíneo|")
+        print("---------------------------------------------------------------------------------------------------------------------------")
         for paciente in lista_pacientes:
             mostrar_paciente(paciente)
-        print("********************************************************************************************************************************")
+        print("***************************************************************************************************************************")
         retorno = "Paciente/s mostrados con éxito."
     else:
         retorno = "La lista está vacía, ingrese pacientes."
@@ -75,7 +76,7 @@ def mostrar_lista_pacientes(lista_pacientes: list[dict]) -> str:
     return retorno
 
 def mostrar_paciente(un_paciente: dict) -> dict:
-    print(f" {un_paciente["id"]}| {un_paciente['nombre']:<10}  | {un_paciente['apellido']:<10}  | {un_paciente['edad']:<10}  | {un_paciente['altura']:<10}  |  {un_paciente['peso']:<10}|   {un_paciente['dni']:<10}    |   {un_paciente['grupo sanguineo']:<10}   |")
+    print(f"|{un_paciente['nombre']:<20}|{un_paciente['apellido']:<20}|{un_paciente['edad']:<15}|{un_paciente['altura']:<15}|{un_paciente['peso']:<15}|{un_paciente['dni']:<15}|{un_paciente['grupo sanguineo']:<15}|")
     return un_paciente
 
 def buscar_paciente(lista_pacientes: list[dict], clave: str, valor: int|str) -> dict|bool:
@@ -176,7 +177,7 @@ def gestionar_modificacion(lista_pacientes: list[dict], lista_grupos_sanguineos:
 
 #region Delete
 def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: list, dni: int) -> str:
-    eliminado = buscar_paciente(lista_pacientes, "dni", 52345678)
+    eliminado = buscar_paciente(lista_pacientes, "dni", dni)
     if not eliminado:
         retorno = f"No se encontró ningún paciente con ID {dni}."
     elif desea_continuar("¿Está seguro que desea eliminar? (SI/NO): ", "Error. Ingrese (SI/NO): "):

@@ -1,6 +1,6 @@
 from os import system
 from pacientes import *
-from pacientes import *
+
 
 lista_pacientes = [
     {"id": 1, "nombre": "Juan", "apellido": "Pérez", "edad": 30, "altura": 175, "peso": 70.5, "dni": 52345678, "grupo sanguineo": "A+"},
