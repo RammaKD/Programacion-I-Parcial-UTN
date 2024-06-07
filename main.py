@@ -17,17 +17,8 @@ def menu_principal(lista_pacientes, lista_pacientes_eliminados, lista_grupos_san
     continuar = True
     system("cls")
     while continuar:
-        print("\nMenú")
-        print("1. Dar de alta")
-        print("2. Modificar")
-        print("3. Eliminar")
-        print("4. Mostrar todos")
-        print("5. Ordenar pacientes")
-        print("6. Buscar paciente por DNI")
-        print("7. Calcular promedio")
-        print("8. Salir")
+        mostrar_opciones_menu_principal()
         opcion = seleccionar_opcion_menu("Seleccione una opción: ")
-
         match opcion:
             case 1:
                 print(ingresar_paciente(lista_pacientes, lista_grupos_sanguineos))
@@ -38,12 +29,11 @@ def menu_principal(lista_pacientes, lista_pacientes_eliminados, lista_grupos_san
             case 4:
                 print(mostrar_lista_pacientes(lista_pacientes))
             case 5:
-                pass
+                print(gestionar_ordenamiento(lista_pacientes))
             case 6:
-                pass
-                print(buscar_por_dni(lista_pacientes))
+                print(gestionar_busqueda_por_dni(lista_pacientes))
             case 7:
-                pass
+                print(gestionar_promedio(lista_pacientes))
             case 8:
                 system("cls")
                 if desea_continuar("Desea salir (SI/NO?: ", "Error. Ingrese SI/NO: "):
