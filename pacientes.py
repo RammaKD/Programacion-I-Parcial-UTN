@@ -398,7 +398,19 @@ def gestionar_ordenamiento(lista_pacientes: list[dict]) -> str:
     
     return gestion
 
-def gestionar_compatibilidad(lista_pacientes: list[dict], lista_diccionarios_compatibilidad, minimo, maximo, reintentos):
+def gestionar_compatibilidad(lista_pacientes: list[dict], lista_diccionarios_compatibilidad, minimo, maximo, reintentos) -> str:
+    """Permite al usuario poder determinar su compatibilidad sanguinea y notificar el resultado.
+
+    Args:
+        lista_pacientes (list[dict]): recibe la lista de pacientes
+        lista_diccionarios_compatibilidad (_type_): recibe la lista de diccionarios de grupos sanguineos compatibles
+        minimo (_type_): recibe un minimo para buscar por DNI
+        maximo (_type_): recibe un maximo para buscar por DNI
+        reintentos (_type_): recibe una cantidad de reintentos.
+
+    Returns:
+        _type_: retorna un mensaje indicando que sucedió
+    """
     if comprobar_len_lista(lista_pacientes):
         paciente_encontrado = buscar_por_dni(lista_pacientes, minimo, maximo, reintentos)
         
@@ -584,13 +596,23 @@ def swap(a, b):
     """
     return b, a
 
-def determinar_donantes(lista_pacientes: list[dict], posibles_grupos_sanguineos, pacientes_a_donar: dict):
+def determinar_donantes(lista_pacientes: list[dict], posibles_grupos_sanguineos: list, paciente_a_donar: dict) -> list[dict]:
+    """Muestra los posibles donantes del paciente que se está analizando.
+
+    Args:
+        lista_pacientes (list[dict]): recibe la lista de paciente
+        posibles_grupos_sanguineos (_type_): recibe la lista de grupos sanguineos compatibles
+        paciente_a_donar (dict): recibe un paciente al cual se le va a donar.
+
+    Returns:
+        list[dict]: retorna la lista de donantes
+    """
     lista_donantes = []
     contador_donantes_maximos = 0
 
     for paciente in lista_pacientes:
         if paciente["grupo sanguineo"] in posibles_grupos_sanguineos[0][1] and contador_donantes_maximos < 3:
-            if paciente["id"] != pacientes_a_donar["id"]:
+            if paciente["id"] != paciente_a_donar["id"]:
                 contador_donantes_maximos += 1
                 lista_donantes.append(paciente)
     
@@ -602,9 +624,19 @@ def determinar_donantes(lista_pacientes: list[dict], posibles_grupos_sanguineos,
 
     return lista_donantes
 
-def determinar_posibles_grupos_sanguineos_donantes(lista_diccionarios_compatibilidad: list[dict], un_paciente: list[dict]):
+def determinar_posibles_grupos_sanguineos_donantes(lista_diccionarios_compatibilidad: list[dict], un_paciente: list[dict]) -> list:
+    """Crea una lista con los posibles grupos sanguineos
+
+    Args:
+        lista_diccionarios_compatibilidad (list[dict]): recibe la lista de diccionarios de grupos sanguineo compatibles
+        un_paciente (list[dict]): recibe un paciente
+
+    Returns:
+        _type_: retorna la lista de posibles grupos sanguineos compatibles
+    """
     grupo_sanguineo_paciente = un_paciente["grupo sanguineo"]
     posibles_grupos_sanguineo = []
+    
     for diccionario in lista_diccionarios_compatibilidad:
         if diccionario["grupo sanguineo"][0] == grupo_sanguineo_paciente:
             grupos_compatibles = diccionario["grupo sanguineo"][1], diccionario["grupo sanguineo"][2]
@@ -612,7 +644,16 @@ def determinar_posibles_grupos_sanguineos_donantes(lista_diccionarios_compatibil
 
     return posibles_grupos_sanguineo
 
-def mostrar_compatibilidades(un_paciente: dict, lista_diccionarios_compatibilidad: dict):
+def mostrar_compatibilidades(un_paciente: dict, lista_diccionarios_compatibilidad: dict) -> dict:
+    """Se encarga de mostrar las compatibilidades de un paciente
+
+    Args:
+        un_paciente (dict): recibe un paciente
+        lista_diccionarios_compatibilidad (dict): recibe la lista de diccionarios de grupos sanguineo compatibles
+
+    Returns:
+        _type_: retorna el paciente
+    """
     grupo_sanguineo_paciente = un_paciente["grupo sanguineo"]
     for diccionario in lista_diccionarios_compatibilidad:
         if diccionario["grupo sanguineo"][0] == grupo_sanguineo_paciente:
@@ -770,7 +811,7 @@ def mostrar_opciones_menu_principal():
     print("6. Buscar paciente por DNI")
     print("7. Calcular promedio")
     print("8. Determinar compatibilidad.")
-    print("8. Salir")
+    print("9. Salir")
 #endregion
 
 

@@ -1,2 +1,5 @@
 id,nombre,apellido,edad,altura,peso,dni,grupo sanguineo
-
+1,Julian,Gonzales,3,130,60.0,5000000,B+
+2,Juan,Perez,30,130,40.0,4000000,A+
+4,Juan,Perez,40,170,40.0,4000000,A+
+5,Pepe,Alvarez,40,50,10.0,4000000,A+
