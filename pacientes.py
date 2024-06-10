@@ -5,7 +5,7 @@ from generales import *
 
 #region Create
 def crear_paciente(id: int,nombre: str,apellido: str, edad: int, altura: int, peso: float, dni: int, grupo_sanguineo: str) -> dict:
-    """Crea un diccionario con las claves y valores de cada paciente
+    """Crea un diccionario con las claves y valores de cada paciente.
 
     Args:
         id (int): recibe ID del paciente
@@ -21,20 +21,19 @@ def crear_paciente(id: int,nombre: str,apellido: str, edad: int, altura: int, pe
         dict: diccionario con los datos del paciente
     """
     diccionario_empleado = {
-        "id" : id,
+        "id" : int(id),
         "nombre" : nombre,
         "apellido" : apellido,
-        "edad" : edad,
-        "altura" : altura,
-        "peso" : peso,
-        "dni" : dni,
+        "edad" : int(edad),
+        "altura" : int(altura),
+        "peso" : float(peso),
+        "dni" : int(dni),
         "grupo sanguineo" : grupo_sanguineo
     }
     return diccionario_empleado
 
 def ingresar_paciente(lista_pacientes: list[dict], lista_grupos_sanguineos: list) -> str:
-    """Se encarga del ingreso de datos y agregar
-    a la lista de pacientes el nuevo paciente.
+    """Se encarga de agregar a la lista de pacientes el nuevo paciente.
 
     Args:
         lista_pacientes (list[dict]): Recibe la lista de pacientes
@@ -47,41 +46,16 @@ def ingresar_paciente(lista_pacientes: list[dict], lista_grupos_sanguineos: list
     retorno = "Ingreso exitoso."
     
     while True:
-        nombre = pedir_nombre(1, 20, 5)
-        if not nombre:
+        datos = obtener_datos(lista_pacientes, lista_grupos_sanguineos)
+        if not datos:
             retorno = "Se agotaron los intentos para ingresar datos."
             break
-        apellido = pedir_apellido(1, 20, 5)
-        if not apellido:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break
-        edad = pedir_edad(1, 120, 5)
-        if not edad:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break
-        altura = pedir_altura(30, 230, 5)
-        if not altura:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break 
-        peso = pedir_peso(10, 300, 5)
-        if not peso:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break
-        dni = pedir_dni(4000000, 99999999, 5)
-        if not dni:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break
-        grupo_sanguineo = pedir_grupo_sanguineo(lista_grupos_sanguineos, 5)
-        if not grupo_sanguineo:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break
+        else:
+            diccionario_paciente = crear_paciente(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7])
+            lista_pacientes.append(diccionario_paciente)
 
-        id = incrementar_id(lista_pacientes)
-        diccionario_paciente = crear_paciente(id, nombre, apellido, edad, altura, peso, dni, grupo_sanguineo)
-        lista_pacientes.append(diccionario_paciente)
-
-        if not desea_continuar("¿Desea seguir cargando? (SI/NO): ", "Error. Ingrese SI/NO: "):
-            break
+            if not desea_continuar("¿Desea seguir cargando? (SI/NO): ", "Error. Ingrese SI/NO: "):
+                break
 
     return retorno
 #endregion
@@ -110,7 +84,7 @@ def mostrar_lista_pacientes(lista_pacientes: list[dict]) -> str:
     return retorno
 
 def mostrar_paciente(un_paciente: dict) -> dict:
-    """Muestra la información de un paciente
+    """Muestra la información de un paciente.
 
     Args:
         un_paciente (dict): Recibe un paciente de la lista
@@ -122,7 +96,7 @@ def mostrar_paciente(un_paciente: dict) -> dict:
     return un_paciente
 
 def buscar_paciente(lista_pacientes: list[dict], clave: str, valor: int|str) -> dict|bool:
-    """Se encarga de buscar un paciente en la lista
+    """Se encarga de buscar un paciente en la lista de pacientes.
 
     Args:
         lista_pacientes (list[dict]): lista de pacientes
@@ -144,7 +118,7 @@ def buscar_paciente(lista_pacientes: list[dict], clave: str, valor: int|str) -> 
 #endregion
 
 #region Update
-def modificar_empleado(lista_grupos_sanguineos: list, un_paciente: dict, dato_a_modificar: str) -> str:
+def modificar_paciente(lista_grupos_sanguineos: list, un_paciente: dict, dato_a_modificar: str) -> str:
     """Se encarga de modificar al empleado solicitado.
     
     Args:
@@ -222,7 +196,7 @@ def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: l
 
 def deshacer_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminados: list, eliminado: dict) -> bool:
     """Se encarga de deshacer la eliminacion de un paciente si el usuario lo desea.
-    Si no de quiere deshacer la eliminacion, agrega al eliminado a la lista de 
+    Si no quiere deshacer la eliminacion, agrega al eliminado a la lista de 
     pacientes eliminados.
 
     Args:
@@ -254,6 +228,10 @@ def gestionar_modificacion(lista_pacientes: list[dict], lista_grupos_sanguineos:
     Args:
         lista_pacientes (list[dict]): Lista de pacientes
         lista_grupos_sanguineos (list): lista de posibles grupo sanguineos
+        minimo (int): recibe un minimo para pasarle a la funcion de buscar por dni
+        maximo (int): recibe un maximo para pasarle a la funcion de buscar por dni
+        reintentos (int): recibe una cant. de reintentos para pasarle a la función
+        de buscar por dni.
 
     Returns:
         str: mensaje del resultado de la gestión de la modificación
@@ -281,6 +259,10 @@ def gestionar_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminado
     Args:
         lista_pacientes (list[dict]): Lista de pacientes
         lista_grupos_sanguineos (list): lista de posibles grupo sanguineos
+        minimo (int): recibe un minimo para pasarle a la funcion de buscar por dni
+        maximo (int): recibe un maximo para pasarle a la funcion de buscar por dni
+        reintentos (int): recibe una cant. de reintentos para pasarle a la función
+        de buscar por dni.
 
     Returns:
         str: mensaje del resultado de la gestión de la eliminación
@@ -300,11 +282,11 @@ def gestionar_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminado
     return gestion
 
 def gestionar_busqueda_por_dni(lista_pacientes: list[dict], minimo: int, maximo: int, reintentos: int) -> str:
-    """Permite al usuario buscar un paciente por su DNI y notificar el resultado.
+    """Permite al usuario buscar un paciente por su DNI y notificar el resultado de la busqueda.
     Args:
         lista_pacientes (list[dict]): recibe la lista de pacientes
         minimo (int): recibe un minimo 
-        maximo (int): _recibe un maximo
+        maximo (int): recibe un maximo
         reintentos (int): recibe cant. maxima de reintentos
 
     Returns:
@@ -324,8 +306,8 @@ def gestionar_busqueda_por_dni(lista_pacientes: list[dict], minimo: int, maximo:
     return retorno
 
 def gestionar_promedio(lista_pacientes: list[dict]) -> str:
-    """Notifica al usuario si la operaciones de promedio finalizaron 
-    o si la lista está vacia
+    """Notifica al usuario si las operaciones de promedio finalizaron. 
+    Sino, si la lista está vacia.
 
     Args:
         lista_pacientes (list[dict]): recibe la lista de pacientes
@@ -395,6 +377,47 @@ def buscar_por_dni(lista_pacientes: list[dict], minimo: int, maximo: int, reinte
     else:
         retorno = None
 
+    
+    return retorno
+
+def obtener_datos(lista_pacientes: list[dict], lista_grupos_sanguineos: list) -> bool|tuple:
+    """Se encarga de obtener los datos de los pacientes y retornarlos en una tupla.
+
+    Args:
+        lista_pacientes (list[dict]): recibe la lista de pacientes
+        lista_grupos_sanguineos (list): recibe la lista de posibles grupos sanguineos
+
+    Returns:
+        bool|tuple: retorna False si no se pasó la validación de algun dato sino,
+        la tupla con los datos.
+    """
+    retorno = False
+    while True:
+        nombre = pedir_nombre(1, 20, 5)
+        if not nombre:
+            break
+        apellido = pedir_apellido(1, 20, 5)
+        if not apellido:
+            break
+        edad = pedir_edad(1, 120, 5)
+        if not edad:
+            break
+        altura = pedir_altura(30, 230, 5)
+        if not altura:
+            break 
+        peso = pedir_peso(10, 300, 5)
+        if not peso:
+            break
+        dni = pedir_dni(4000000, 99999999, 5)
+        if not dni:
+            break
+        grupo_sanguineo = pedir_grupo_sanguineo(lista_grupos_sanguineos, 5)
+        if not grupo_sanguineo:
+            break
+        id = incrementar_id(lista_pacientes)
+        retorno = (id, nombre, apellido, edad, altura, peso, dni, grupo_sanguineo)
+        break
+    
     
     return retorno
 
@@ -557,25 +580,25 @@ def ejecutar_menu_modificacion(lista_grupos_sanguineos: list, paciente_encontrad
         match opcion_modificacion:
                 case 1:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "nombre"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "nombre"))
                 case 2:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "apellido"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "apellido"))
                 case 3:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "edad"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "edad"))
                 case 4:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "altura"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "altura"))
                 case 5:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "peso"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "peso"))
                 case 6:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "dni"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "dni"))
                 case 7:
                     system("cls")
-                    print(modificar_empleado(lista_grupos_sanguineos, paciente_encontrado, "grupo sanguineo"))
+                    print(modificar_paciente(lista_grupos_sanguineos, paciente_encontrado, "grupo sanguineo"))
                 case 8:
                     system("cls")
                     if desea_continuar("Desea salir? (SI/NO): ", "Error. Ingrese SI/NO: "):

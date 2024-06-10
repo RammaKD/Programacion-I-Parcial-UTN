@@ -1,20 +1,8 @@
 from os import system
 from pacientes import *
-from procesos_archivos import *
+from data import *
 
-lista_pacientes = [
-    # {"id": 1, "nombre": "Juan", "apellido": "Pérez", "edad": 30, "altura": 175, "peso": 70.5, "dni": 52345678, "grupo sanguineo": "A+"},
-    # {"id": 2, "nombre": "María", "apellido": "González", "edad": 25, "altura": 160, "peso": 55.0, "dni": 73456789, "grupo sanguineo": "O-"},
-    # {"id": 3, "nombre": "Carlos", "apellido": "Rodríguez", "edad": 45, "altura": 180, "peso": 85.3, "dni": 84567890, "grupo sanguineo": "B+"},
-    # {"id": 4, "nombre": "Lucía", "apellido": "Fernández", "edad": 35, "altura": 165, "peso": 62.5, "dni": 95678901, "grupo sanguineo": "AB-"},
-    # {"id": 5, "nombre": "Miguel", "apellido": "Martínez", "edad": 28, "altura": 170, "peso": 68.0, "dni": 56789012, "grupo sanguineo": "A-"}
-]
-lista_pacientes_eliminados = []
-lista_grupos_sanguineos = ["A","B","AB","A+","B+","AB+","O","O+","A-","B-","AB-","O-"]
-path_csv = "Paciente.csv"
-
-
-def ejecutar_menu_principal(lista_pacientes: list[dict], lista_pacientes_eliminados: list[dict], lista_grupos_sanguineos: list, path_csv: str):
+def ejecutar_menu_principal(lista_pacientes: list[dict], lista_pacientes_eliminados: list[dict], lista_grupos_sanguineos: list, path_csv: str, path_json: str):
     """Ejecuta el menu principal, con sus opciones.
 
     Args:
@@ -22,7 +10,8 @@ def ejecutar_menu_principal(lista_pacientes: list[dict], lista_pacientes_elimina
         lista_pacientes_eliminados (list[dict]): recibe la lista de pacientes eliminados
         lista_grupos_sanguineos (list): recibe la lista de posibles grupos sanguineos
     """
-    leer_csv(path_csv, lista_pacientes, crear_paciente)
+    leer_csv(path_csv, lista_pacientes)
+    leer_json(path_json, lista_pacientes_eliminados)
     continuar = True
     system("cls")
     while continuar:
@@ -47,11 +36,12 @@ def ejecutar_menu_principal(lista_pacientes: list[dict], lista_pacientes_elimina
                 system("cls")
                 if desea_continuar("Desea salir del programa (SI/NO)?: ", "Error. Ingrese SI/NO: "):
                     actualizar_csv(path_csv, lista_pacientes)
+                    actualizar_json(path_json, lista_pacientes_eliminados)
                     continuar = False
                     break
             case _:
                 system("cls")
                 print("Entrada no válida. Ingrese una opción del Menú.")
 
-ejecutar_menu_principal(lista_pacientes, lista_pacientes_eliminados, lista_grupos_sanguineos, path_csv)
+ejecutar_menu_principal(lista_pacientes, lista_pacientes_eliminados, lista_grupos_sanguineos, path_csv, path_json)
 

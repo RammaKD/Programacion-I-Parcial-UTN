@@ -79,7 +79,7 @@ def encontrar_ultimo_valor_en_lista_diccionarios(lista_diccionarios: list[dict],
 
 def incrementar_id (lista_diccionarios:list[dict]) -> int:
     """Suma 1 al último ID de la lista de diccionarios que recibe.
-
+    De esta forma lo hace autoincremental
     Args:
         lista_diccionarios (list[dict]): recibe una lista de diccionarios
 
@@ -87,7 +87,7 @@ def incrementar_id (lista_diccionarios:list[dict]) -> int:
         int: retorna el id incrementado
     """
     ultimo_id = encontrar_ultimo_valor_en_lista_diccionarios(lista_diccionarios, "id")
-    id_incrementado = ultimo_id + 1
+    id_incrementado = int(ultimo_id) + 1
     return id_incrementado
 
 def crear_lista_keys(lista_diccionarios: list[dict]) -> list:
