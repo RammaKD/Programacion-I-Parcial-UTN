@@ -50,46 +50,6 @@ def actualizar_csv(path: str, lista: list[dict]) -> bool:
 
     return exito
 
-def leer_json(path: str, lista_pacientes_eliminados: list[dict]) -> bool:
-    """Lee los datos de un archivo JSON y agrega los datos a la lista de eliminados.
-
-    Args:
-        path (str): recibe path del archivo JSON
-        lista_pacientes_eliminados (list[dict]): recibe lista de eliminados
-
-    Returns:
-        bool: retorna True si se completó con éxito la lectura,
-        sino False en caso de haber un error
-    """
-    exito = True
-    try:
-        with open(path, "r") as archivo:
-            empleados_eliminados = json.load(archivo)
-            for empleado in empleados_eliminados:
-                lista_pacientes_eliminados.append(empleado)
-    except:
-        exito = False
-    return exito
-
-def actualizar_json(path: str, lista: list[dict]) -> bool:
-    """Añade los eliminados al archivo JSON si es que los hay.
-
-    Args:
-        path (str): recibe el path del arhivo JSON
-        lista (list[dict]): recibe la lista de eliminados
-
-    Returns:
-        bool: retorna True si se completó con exito la escritura,
-        sino False en caso de haber un error
-    """
-    exito = True
-    try:
-        with open(path, "w") as archivo:
-            json.dump(lista, archivo, indent=4)
-    except:
-        exito = False
-    return exito
-
 def leer_json_ultimo_id(path: str):
     """Lee el valor de la clave ID del archivo JSON.
 

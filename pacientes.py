@@ -196,7 +196,7 @@ def deshacer_modificacion(un_paciente: dict, dato_modificar: str, estado_anterio
 #endregion
 
 #region Delete
-def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: list, eliminado: dict) -> str:
+def eliminar_paciente(lista_pacientes: list[dict], eliminado: dict) -> str:
     """Se encarga de eliminar un paciente de la lista de pacientes.
 
     Args:
@@ -210,7 +210,7 @@ def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: l
     if desea_continuar("¿Está seguro que desea eliminar? (SI/NO): ", "Error. Ingrese (SI/NO): "):
         lista_pacientes.remove(eliminado)
         print("Eliminación hecha.")
-        if deshacer_eliminacion(lista_pacientes, lista_pacientes_eliminados, eliminado):
+        if deshacer_eliminacion(lista_pacientes, eliminado):
             retorno = "Eliminación cancelada."
         else:
             retorno = "Eliminación confirmada con éxito."
@@ -219,7 +219,7 @@ def eliminar_paciente(lista_pacientes: list[dict], lista_pacientes_eliminados: l
 
     return retorno
 
-def deshacer_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminados: list, eliminado: dict) -> bool:
+def deshacer_eliminacion(lista_pacientes: list[dict], eliminado: dict) -> bool:
     """Se encarga de deshacer la eliminacion de un paciente si el usuario lo desea.
     Si no quiere deshacer la eliminacion, agrega al eliminado a la lista de 
     pacientes eliminados.
@@ -236,7 +236,6 @@ def deshacer_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminados
         lista_pacientes.append(eliminado)
         retorno = True
     else:
-        lista_pacientes_eliminados.append(eliminado)
         retorno = False
 
     return retorno
@@ -300,7 +299,7 @@ def gestionar_modificacion(lista_pacientes: list[dict], lista_grupos_sanguineos:
     
     return gestion
 
-def gestionar_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminados: list, minimo: int, maximo: int, reintentos: int) -> str:
+def gestionar_eliminacion(lista_pacientes: list[dict], minimo: int, maximo: int, reintentos: int) -> str:
     """Permite buscar un paciente por DNI en la lista y, si se encuentra, poder eliminarlo. 
     Ademas notifica si la lista esta vacía, no se encuentra al paciente o
     se agotan los intentos.
@@ -320,7 +319,7 @@ def gestionar_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminado
         retorno_dni = buscar_por_dni(lista_pacientes, minimo, maximo, reintentos)
         if type(retorno_dni) == dict:
             paciente_a_eliminar = retorno_dni
-            gestion = eliminar_paciente(lista_pacientes, lista_pacientes_eliminados, paciente_a_eliminar)
+            gestion = eliminar_paciente(lista_pacientes, paciente_a_eliminar)
         elif retorno_dni == False:
             gestion = "No se encontró ningún paciente con ese DNI."
         else:
@@ -398,6 +397,25 @@ def gestionar_ordenamiento(lista_pacientes: list[dict]) -> str:
     
     
     return gestion
+
+def gestionar_compatibilidad(lista_pacientes: list[dict], lista_diccionarios_compatibilidad, minimo, maximo, reintentos):
+    if comprobar_len_lista(lista_pacientes):
+        paciente_encontrado = buscar_por_dni(lista_pacientes, minimo, maximo, reintentos)
+        
+        if paciente_encontrado == False:
+            retorno = "Paciente no encontrado."
+        elif paciente_encontrado == None:
+            retorno = "Se agotaron los intentos para ingresar datos."
+        else:
+            posibles_grupos_sanguineos_donantes = determinar_posibles_grupos_sanguineos_donantes(lista_diccionarios_compatibilidad, paciente_encontrado)
+            mostrar_compatibilidades(paciente_encontrado, lista_diccionarios_compatibilidad)
+            determinar_donantes(lista_pacientes, posibles_grupos_sanguineos_donantes, paciente_encontrado)
+            retorno = "Compatibilidad finalizada."
+    else:
+        retorno = "La lista esta vacía, ingrese pacientes."
+  
+    
+    return retorno
 #endregion
 
 #region Funciones auxiliares
@@ -565,6 +583,43 @@ def swap(a, b):
         _type_: retorna las variables en posicion opuesta
     """
     return b, a
+
+def determinar_donantes(lista_pacientes: list[dict], posibles_grupos_sanguineos, pacientes_a_donar: dict):
+    lista_donantes = []
+    contador_donantes_maximos = 0
+
+    for paciente in lista_pacientes:
+        if paciente["grupo sanguineo"] in posibles_grupos_sanguineos[0][1] and contador_donantes_maximos < 3:
+            if paciente["id"] != pacientes_a_donar["id"]:
+                contador_donantes_maximos += 1
+                lista_donantes.append(paciente)
+    
+    if len(lista_donantes) > 0:
+        mostrar_lista_pacientes(lista_donantes)
+        print("Posibles donantes mostrados.")
+    else:
+        print("No hay donantes disponibles.")
+
+    return lista_donantes
+
+def determinar_posibles_grupos_sanguineos_donantes(lista_diccionarios_compatibilidad: list[dict], un_paciente: list[dict]):
+    grupo_sanguineo_paciente = un_paciente["grupo sanguineo"]
+    posibles_grupos_sanguineo = []
+    for diccionario in lista_diccionarios_compatibilidad:
+        if diccionario["grupo sanguineo"][0] == grupo_sanguineo_paciente:
+            grupos_compatibles = diccionario["grupo sanguineo"][1], diccionario["grupo sanguineo"][2]
+            posibles_grupos_sanguineo.append(grupos_compatibles)
+
+    return posibles_grupos_sanguineo
+
+def mostrar_compatibilidades(un_paciente: dict, lista_diccionarios_compatibilidad: dict):
+    grupo_sanguineo_paciente = un_paciente["grupo sanguineo"]
+    for diccionario in lista_diccionarios_compatibilidad:
+        if diccionario["grupo sanguineo"][0] == grupo_sanguineo_paciente:
+            print(f"Puede donar a: {diccionario['grupo sanguineo'][1]}")
+            print(f"Puede recibir de: {diccionario['grupo sanguineo'][2]}")
+            break
+    return un_paciente
 #endregion
 
 #region Menus
@@ -703,7 +758,7 @@ def mostrar_opciones_menu_modificacion():
     print("7. Grupo sanguíneo")
     print("8. Salir")
 
-def mostrar_opciones_menu_principal():
+def mostrar_opciones_menu_principal(): 
     """Muestra las opciones del menu principal
     """
     print("\nMenú")
@@ -714,5 +769,9 @@ def mostrar_opciones_menu_principal():
     print("5. Ordenar pacientes")
     print("6. Buscar paciente por DNI")
     print("7. Calcular promedio")
+    print("8. Determinar compatibilidad.")
     print("8. Salir")
 #endregion
+
+
+

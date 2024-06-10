@@ -15,16 +15,16 @@ def desea_continuar(mensaje:str, mensaje_error: str) -> bool:
             while continuar != "si" and continuar != "no":
                 continuar = input(mensaje_error).lower()
             if continuar == "si":
-                bandera_salir = True
+                retorno = True
                 break
             else:
-                bandera_salir = False
+                retorno = False
                 break
         except:
             mensaje = mensaje_error
             
     
-    return bandera_salir
+    return retorno
     
 def seleccionar_opcion_menu(mensaje: str) -> int:
     """Permite al usuario ingresar una opcion numérica del menu que quiera.
