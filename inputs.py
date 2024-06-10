@@ -245,7 +245,7 @@ def pedir_peso(minimo: float, maximo: float, reintentos: int) -> float|bool:
     return peso
 
 def pedir_dni(minimo: int, maximo: int, reintentos: int) -> int|bool:
-    dni = get_int(f"Ingrese DNI (Sin comas, ni puntos| Min: {minimo} - Max: {maximo}): ", 
+    dni = get_validate_dni(f"Ingrese DNI (Sin comas, ni puntos| Min: {minimo} - Max: {maximo}): ", 
           f"Error. Reingrese DNI (Min:{minimo}-Max:{maximo}): ", 
           minimo, maximo, reintentos)
     

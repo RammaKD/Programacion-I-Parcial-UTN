@@ -59,50 +59,8 @@ def comprobar_len_lista(lista: list) -> bool:
     
     return lenght
 
-def encontrar_ultimo_valor_en_lista_diccionarios(lista_diccionarios: list[dict], clave: str) -> int:
-    """Encuentra el último valor de determinada clave en la lisra de diccionarios.
 
-    Args:
-        lista_diccionarios (list[dict]): recibe una lista de diccionarios
-        clave (str): recibe la clave del último valor a encontrar
 
-    Returns:
-        int|float|str: retorna el último valor de la clave solicitada.
-    """
-    value = 0
-    for diccionario in lista_diccionarios:
-        posible_valor = diccionario[clave]
-        if posible_valor != 0:
-            value = posible_valor
-            
-    return value
 
-def incrementar_id (lista_diccionarios:list[dict]) -> int:
-    """Suma 1 al último ID de la lista de diccionarios que recibe.
-    De esta forma lo hace autoincremental
-    Args:
-        lista_diccionarios (list[dict]): recibe una lista de diccionarios
 
-    Returns:
-        int: retorna el id incrementado
-    """
-    ultimo_id = encontrar_ultimo_valor_en_lista_diccionarios(lista_diccionarios, "id")
-    id_incrementado = int(ultimo_id) + 1
-    return id_incrementado
-
-def crear_lista_keys(lista_diccionarios: list[dict]) -> list:
-    """Crea una lista con las keys de una lista de diccionarios.
-
-    Args:
-        lista_diccionarios (list[dict]): recibe una lista de diccionarios
-
-    Returns:
-        list: retorna la lista con las keys encontradas, sin repetirse.
-    """
-    claves_unicas = set()
-    for empleado in lista_diccionarios:
-        claves_unicas.update(empleado.keys())
-    lista_parametros = list(claves_unicas)
-
-    return lista_parametros
 

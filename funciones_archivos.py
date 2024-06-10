@@ -1,8 +1,7 @@
 import re
-from pacientes import *
 import json
 
-def leer_csv(path: str, lista: list) -> bool:
+def leer_csv(path: str, lista: list, crear_paciente) -> bool:
     """Lee los datos de un archivo CSV y lo utiliza para crear un diccionario y agregarlo a la lista. 
     Para crear el diccionario llama a la funcion crear_paciente.
     Args:
@@ -90,3 +89,55 @@ def actualizar_json(path: str, lista: list[dict]) -> bool:
     except:
         exito = False
     return exito
+
+def leer_json_ultimo_id(path: str):
+    """Lee el valor de la clave ID del archivo JSON.
+
+    Args:
+        path (str): recibe el path del archivo JSON
+
+    Returns:
+        _type_: retorna el valor de la clave, si hubo error False
+    """
+    try: 
+        with open(path, "r") as archivo:
+            contenido = json.load(archivo)
+            exito = contenido
+    except:
+        exito = False
+
+    return exito
+
+def actualizar_json_ultimo_id(path: str, id_incrementado: int):
+    """Actualiza el archivo JSON con el id incrementado
+
+    Args:
+        path (str): recibe el path del archivo JSON
+        id_incrementado (int): recibe el id incrementado
+
+    Returns:
+        _type_: retorna False en caso de error, sino True
+    """
+    exito = True
+    try:
+        with open(path, "w") as archivo:
+            nuevo_diccionario = [{"id" : id_incrementado}]
+            json.dump(nuevo_diccionario, archivo, indent=2)
+    except:
+        exito = False
+
+    return exito
+
+def incrementar_id(path: str) -> int:
+    """Suma 1 al último ID del archivo JSON
+    De esta forma lo hace autoincremental
+    Args:
+        path (str): recibe el path del archivo JSON
+
+    Returns:
+        int: retorna el id incrementado
+    """
+    ultimo_id = leer_json_ultimo_id(path)
+    id_incrementado = ultimo_id[0]["id"] + 1
+    actualizar_json_ultimo_id(path, id_incrementado)
+    return id_incrementado

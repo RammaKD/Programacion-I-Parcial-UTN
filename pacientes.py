@@ -1,7 +1,7 @@
 from os import system
 from inputs import *
 from generales import *
-
+from funciones_archivos import *
 
 #region Create
 def crear_paciente(id: int,nombre: str,apellido: str, edad: int, altura: int, peso: float, dni: int, grupo_sanguineo: str) -> dict:
@@ -32,7 +32,7 @@ def crear_paciente(id: int,nombre: str,apellido: str, edad: int, altura: int, pe
     }
     return diccionario_empleado
 
-def ingresar_paciente(lista_pacientes: list[dict], lista_grupos_sanguineos: list) -> str:
+def ingresar_paciente_lista(lista_pacientes: list[dict], un_paciente: dict) -> list[dict]:
     """Se encarga de agregar a la lista de pacientes el nuevo paciente.
 
     Args:
@@ -40,22 +40,29 @@ def ingresar_paciente(lista_pacientes: list[dict], lista_grupos_sanguineos: list
         lista_grupos_sanguineos (list): Recibe lista de posibles grupos sanguíneos
 
     Returns:
-        str: mensaje si el ingreso fue exitoso o si se agotaron los
-        intentos para ingresar datos.
+        lista_pacientes (list[dict]): retorna la lista de pacientes con los datos añadidos
     """
-    retorno = "Ingreso exitoso."
-    
-    while True:
-        datos = obtener_datos(lista_pacientes, lista_grupos_sanguineos)
-        if not datos:
-            retorno = "Se agotaron los intentos para ingresar datos."
-            break
-        else:
-            diccionario_paciente = crear_paciente(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7])
-            lista_pacientes.append(diccionario_paciente)
+    lista_pacientes.append(un_paciente)
 
-            if not desea_continuar("¿Desea seguir cargando? (SI/NO): ", "Error. Ingrese SI/NO: "):
-                break
+    return lista_pacientes
+
+def cargar_datos_paciente(lista_grupos_sanguineos: list, path_json_ultimo_id: str) -> bool|dict:
+    """Carga los datos del paciente y guarda un diccionario, luego lo retorna si no hubo error.
+
+    Args:
+        lista_pacientes (list[dict]): recibe la lista de pacientes
+        lista_grupos_sanguineos (list): recibe la lista de posibles grupos sanguineos
+
+    Returns:
+        bool|dict: retorna False si algun dato no paso la validacion, sino el diccionario.
+    """
+    datos = obtener_datos(lista_grupos_sanguineos, path_json_ultimo_id)
+    if not datos:
+        retorno = False
+    else:
+        diccionario_paciente = crear_paciente(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7])
+        retorno = diccionario_paciente
+        
 
     return retorno
 #endregion
@@ -93,6 +100,24 @@ def mostrar_paciente(un_paciente: dict) -> dict:
         dict: diccionario del paciente 
     """
     print(f"{un_paciente["id"]}|{un_paciente['nombre']:<20}|{un_paciente['apellido']:<20}|{un_paciente['edad']:<15}|{un_paciente['altura']:<15}|{un_paciente['peso']:<15}|{un_paciente['dni']:<15}|{un_paciente['grupo sanguineo']:<15}|")
+    
+    return un_paciente
+
+def mostrar_un_paciente_con_tabla(un_paciente: dict) -> dict:
+    """Muestra la información de un empleado con la tabla encima.
+
+    Args:
+        un_paciente (dict): _description_
+
+    Returns:
+        dict: _description_
+    """
+    print("***************************************************************************************************************************")
+    print("|       Nombre       |      Apellido      |     Edad      |   Altura(cm)  |    Peso(KG)   |      DNI      |Grupo sanguíneo|")
+    print("---------------------------------------------------------------------------------------------------------------------------")
+    print(f"{un_paciente["id"]}|{un_paciente['nombre']:<20}|{un_paciente['apellido']:<20}|{un_paciente['edad']:<15}|{un_paciente['altura']:<15}|{un_paciente['peso']:<15}|{un_paciente['dni']:<15}|{un_paciente['grupo sanguineo']:<15}|")
+    print("***************************************************************************************************************************")
+
     return un_paciente
 
 def buscar_paciente(lista_pacientes: list[dict], clave: str, valor: int|str) -> dict|bool:
@@ -110,7 +135,7 @@ def buscar_paciente(lista_pacientes: list[dict], clave: str, valor: int|str) -> 
     retorno = False
     for paciente in lista_pacientes:
         if paciente[clave] == valor:
-            mostrar_paciente(paciente)
+            mostrar_un_paciente_con_tabla(paciente)
             retorno = paciente
             break
     
@@ -134,17 +159,17 @@ def modificar_paciente(lista_grupos_sanguineos: list, un_paciente: dict, dato_a_
     
     if not nuevo_dato:
         retorno = "Se agotaron los intentos para ingresar nuevo dato."
-        mostrar_paciente(un_paciente)
+        mostrar_un_paciente_con_tabla(un_paciente)
     elif desea_continuar("¿Desea efectuar el cambio? (SI/NO): ", "Error. Ingrese (SI/NO): "):
         un_paciente[dato_a_modificar] = nuevo_dato
-        mostrar_paciente(un_paciente)
+        mostrar_un_paciente_con_tabla(un_paciente)
         retorno = "Paciente modificado."
         if deshacer_modificacion(un_paciente, dato_a_modificar, estado_anterior):
             retorno = "Se deshicieron los cambios."
         else:
             retorno = f"Cambio/s confirmado/s con éxito.\nNuevo dato: {nuevo_dato}\nDato antiguo: {estado_anterior}"
     else:
-        mostrar_paciente(un_paciente)
+        mostrar_un_paciente_con_tabla(un_paciente)
         retorno = "Cambio deshecho."
 
     return retorno
@@ -162,7 +187,7 @@ def deshacer_modificacion(un_paciente: dict, dato_modificar: str, estado_anterio
     """
     if desea_continuar("¿Desea deshacer el cambio? (SI/NO): ", "Error. Ingrese (SI/NO): "):
         un_paciente[dato_modificar] = estado_anterior
-        mostrar_paciente(un_paciente)
+        mostrar_un_paciente_con_tabla(un_paciente)
         retorno = True
     else:
         retorno = False
@@ -220,10 +245,34 @@ def deshacer_eliminacion(lista_pacientes: list[dict], lista_pacientes_eliminados
 #######################################################################################################################################
 
 #region Gestión
+def gestionar_ingreso(lista_pacientes: list[dict], lista_grupos_sanguineos: list, path_json_ultimo_id: str) -> str:
+    """Permite al usuario cargar paciente llamando a sus respectivas funciones.
+    Notifica con un mensaje si el ingreso fue exitoso o no.
+
+    Args:
+        lista_pacientes (list[dict]): recibe la lista de paciente
+        lista_grupos_sanguineos (list): recibe la lista de posibles grupos sanguineos
+
+    Returns:
+        str: retorna un mensaje detallando el resultado del ingreso.
+    """
+    retorno = "Ingreso exitoso."
+    while True:
+        paciente_nuevo = cargar_datos_paciente(lista_grupos_sanguineos, path_json_ultimo_id)
+        if not paciente_nuevo:
+            retorno = "Ingreso fallido. Se agotaron los intentos para ingresar datos."
+            break
+        else:
+            ingresar_paciente_lista(lista_pacientes, paciente_nuevo)
+            if not desea_continuar("Desea seguir cargando (SI/NO)?: ", "Error. Ingrese SI/NO: "):
+                break
+    
+    return retorno
+
 def gestionar_modificacion(lista_pacientes: list[dict], lista_grupos_sanguineos: list, minimo: int, maximo: int, reintentos: int) -> str:
     """Permite buscar un paciente por DNI en la lista y, si se encuentra, poder, modificar sus datos. 
     Si la lista esta vacía, no se encuentra al paciente o
-    se agotan los intentos, se notifica al usuario
+    se agotan los intentos, se notifica al usuario.
 
     Args:
         lista_pacientes (list[dict]): Lista de pacientes
@@ -380,7 +429,7 @@ def buscar_por_dni(lista_pacientes: list[dict], minimo: int, maximo: int, reinte
     
     return retorno
 
-def obtener_datos(lista_pacientes: list[dict], lista_grupos_sanguineos: list) -> bool|tuple:
+def obtener_datos(lista_grupos_sanguineos: list, path_json_ultimo_id: str) -> bool|tuple:
     """Se encarga de obtener los datos de los pacientes y retornarlos en una tupla.
 
     Args:
@@ -414,7 +463,7 @@ def obtener_datos(lista_pacientes: list[dict], lista_grupos_sanguineos: list) ->
         grupo_sanguineo = pedir_grupo_sanguineo(lista_grupos_sanguineos, 5)
         if not grupo_sanguineo:
             break
-        id = incrementar_id(lista_pacientes)
+        id = incrementar_id(path_json_ultimo_id)
         retorno = (id, nombre, apellido, edad, altura, peso, dni, grupo_sanguineo)
         break
     
@@ -491,10 +540,10 @@ def ordenar_elementos_ascendente_descendente(lista_pacientes: list[dict], parame
         for j in range(i + 1, len(lista_pacientes)):
             if flujo == "ASCENDENTE":
                 if lista_pacientes[i][parametro] > lista_pacientes[j][parametro]:
-                    lista_pacientes[i], lista_pacientes[j] = lista_pacientes[j], lista_pacientes[i]
+                    lista_pacientes[i], lista_pacientes[j] = swap(lista_pacientes[i], lista_pacientes[j])
             else:
                 if lista_pacientes[i][parametro] < lista_pacientes[j][parametro]:
-                    lista_pacientes[i], lista_pacientes[j] = lista_pacientes[j], lista_pacientes[i]
+                    lista_pacientes[i], lista_pacientes[j] = swap(lista_pacientes[i], lista_pacientes[j])
     
     mostrar_lista_pacientes(lista_pacientes)
     print("Pacientes ordenados con éxito.")
@@ -504,6 +553,18 @@ def ordenar_elementos_ascendente_descendente(lista_pacientes: list[dict], parame
         gestionar_ordenamiento(lista_pacientes)
 
     return retorno
+
+def swap(a, b):
+    """Intercambiar dos variables de lugar.
+
+    Args:
+        a (_type_): recibe una variable
+        b (_type_): recibe otra variable
+
+    Returns:
+        _type_: retorna las variables en posicion opuesta
+    """
+    return b, a
 #endregion
 
 #region Menus
