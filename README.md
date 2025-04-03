@@ -1,1 +1,1 @@
-
+# Primer parcial de la materia Programación I dee la carrera TUP. Se ha desarrollado un menú CRUD para dar de alta pacientes para una clinica, los mismos se pueden modificar, eliminar, mostrar y ordenar. 
